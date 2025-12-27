@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 // this class concerns with the Logs like for TestNG and my Logs
 public class LogsUtility {
 
-    public static final String Logs_Path = "test-outputs/Logs";
+    public static final String Logs_Path = "testPages.test-outputs/Logs";
 
     public static void LoggerTrace(String message) {
 

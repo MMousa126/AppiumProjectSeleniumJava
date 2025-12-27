@@ -2,8 +2,8 @@ package Utilities;
 
 import com.assertthat.selenium_shutterbug.core.Capture;
 import com.assertthat.selenium_shutterbug.core.Shutterbug;
+import io.appium.java_client.android.AndroidDriver;
 import io.qameta.allure.Allure;
-import org.openqa.selenium.WebDriver;
 import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 
@@ -15,12 +15,12 @@ import java.nio.file.Path;
 
 public class VisualUtility {
 
-    private static final String baseLineScreenshot = "test-outputs/VisualTest/baseLineScreenshot/";
-    private static final String expectedScreenshot =  "test-outputs/VisualTest/expectedScreenshot/";
-    private static final String diffImagePath = "test-outputs/VisualTest/differentialImage/";
+    private static final String baseLineScreenshot = "testPages.test-outputs/VisualTest/baseLineScreenshot/";
+    private static final String expectedScreenshot =  "testPages.test-outputs/VisualTest/expectedScreenshot/";
+    private static final String diffImagePath = "testPages.test-outputs/VisualTest/differentialImage/";
 
 
-    public static void TakingScreenShotVTBaseLine(WebDriver driver, String ScreenShootName) {
+    public static void TakingScreenShotVTBaseLine(AndroidDriver driver, String ScreenShootName) {
 
         try {
             BufferedImage screenshot = Shutterbug.shootPage(driver, Capture.FULL_SCROLL).getImage();
@@ -34,7 +34,7 @@ public class VisualUtility {
             LogsUtility.LoggerError(e.getMessage());
         }
     }
-    public static void TakingScreenShotVTExpected(WebDriver driver, String ScreenShootName) {
+    public static void TakingScreenShotVTExpected(AndroidDriver driver, String ScreenShootName) {
 
         try {
             BufferedImage screenshot = Shutterbug.shootPage(driver, Capture.FULL_SCROLL).getImage();

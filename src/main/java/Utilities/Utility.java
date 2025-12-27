@@ -2,13 +2,12 @@ package Utilities;
 
 import com.assertthat.selenium_shutterbug.core.Capture;
 import com.assertthat.selenium_shutterbug.core.Shutterbug;
+import io.appium.java_client.AppiumDriver;
 import io.qameta.allure.Allure;
-
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.openqa.selenium.*;
 import org.openqa.selenium.Point;
-
+import org.openqa.selenium.*;
 import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -19,8 +18,8 @@ import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -33,17 +32,17 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.chrono.HijrahDate;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 // this class concerns with any additional function that can helps me (General)
 public class Utility {
-
-    private static final String ScreenShoot_Path = "test-outputs/Screenshoots/";
-
-
+ 
+    private static final String ScreenShoot_Path = "testPages.test-outputs/Screenshoots/";
 
 
-    public static void Clicking_OnElement(WebDriver driver, By locator) {
+
+
+    public static void Clicking_OnElement(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(15))
                 .until(ExpectedConditions.elementToBeClickable(locator));
@@ -51,17 +50,17 @@ public class Utility {
         driver.findElement(locator).click();
     }
 
-    public static void Clicking_OnElementVisibility(WebDriver driver, By locator) {
+    public static void Clicking_OnElementVisibility(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
 
         driver.findElement(locator).click();
     }
-    public static void Clicking_OnElementWithoutAnyWait(WebDriver driver, By locator) {
+    public static void Clicking_OnElementWithoutAnyWait(AppiumDriver driver, By locator) {
         driver.findElement(locator).click();
     }
-    public static void Clicking_OnElementWithVisibility(WebDriver driver, By locator) {
+    public static void Clicking_OnElementWithVisibility(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -69,49 +68,49 @@ public class Utility {
         driver.findElement(locator).click();
 
     }
-    public static void waitPageToReload(WebDriver driver,By locator){
+    public static void waitPageToReload(AppiumDriver driver,By locator){
 
         new WebDriverWait(driver, Duration.ofSeconds(20))
                 .until(ExpectedConditions.stalenessOf(Utility.ByToWebElement(driver,locator)));
     }
 
-    public static void refreshPage(WebDriver driver){
+    public static void refreshPage(AppiumDriver driver){
         driver.navigate().refresh();
     }
 
-    public static void waitPageToReload(WebDriver driver){
+    public static void waitPageToReload(AppiumDriver driver){
 
         new WebDriverWait(driver, Duration.ofSeconds(200))
-                .until(webDriver -> ((JavascriptExecutor) webDriver)
+                .until(AppiumDriver -> ((JavascriptExecutor) AppiumDriver)
                         .executeScript("return document.readyState").equals("complete"));
     }
 
-    public static void waitUntilThePresenceOfElement(WebDriver driver, By locator){
+    public static void waitUntilThePresenceOfElement(AppiumDriver driver, By locator){
 
         new WebDriverWait(driver, Duration.ofSeconds(200))
                 .until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
-    public static void waitUntilButtonIsEnabled(WebDriver driver, By locator){
+    public static void waitUntilButtonIsEnabled(AppiumDriver driver, By locator){
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(d -> d.findElement(locator).isEnabled());
 
     }
 
-    public static void waitUntilThePresenceOfText(WebDriver driver, By locator,String text){
+    public static void waitUntilThePresenceOfText(AppiumDriver driver, By locator,String text){
 
         new WebDriverWait(driver, Duration.ofSeconds(200))
                 .until(ExpectedConditions.textToBePresentInElementLocated(locator,text));
     }
 
-    public static String getAttribute(WebDriver driver,By locator, String attribute){
+    public static String getAttribute(AppiumDriver driver,By locator, String attribute){
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
 
         return driver.findElement(locator).getAttribute(attribute);
     }
-    public static String getAttributeBoolean(WebDriver driver,By locator, String attribute,Boolean exp){
+    public static String getAttributeBoolean(AppiumDriver driver,By locator, String attribute,Boolean exp){
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementSelectionStateToBe(locator,exp));
@@ -119,7 +118,7 @@ public class Utility {
         return driver.findElement(locator).getAttribute(attribute);
     }
 
-    public static void SendData(WebDriver driver, By locator, String DataToBeSend) {
+    public static void SendData(AppiumDriver driver, By locator, String DataToBeSend) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -127,18 +126,18 @@ public class Utility {
         driver.findElement(locator).sendKeys(DataToBeSend);
     }
 
-    public static void SendDataWithoutWait(WebDriver driver, By locator, String DataToBeSend) {
+    public static void SendDataWithoutWait(AppiumDriver driver, By locator, String DataToBeSend) {
 
         driver.findElement(locator).sendKeys(DataToBeSend);
     }
 
 
-    public static void uploadingFileUsingSendKey(WebDriver driver, By locator, String path){
+    public static void uploadingFileUsingSendKey(AppiumDriver driver, By locator, String path){
         driver.findElement(locator).sendKeys(path);
     }
 
 
-    public static void uploadingFileUsingRobot(WebDriver driver,By locator, String path) {
+    public static void uploadingFileUsingRobot(AppiumDriver driver,By locator, String path) {
 
         try {
 //            Utility.ScrollingUsingJS(driver,locator);
@@ -175,13 +174,13 @@ public class Utility {
 
 
 
-    private static boolean isFileDialogOpened(WebDriver driver) {
+    private static boolean isFileDialogOpened(AppiumDriver driver) {
         // Customize this method based on your application's behavior
         // Example: check if a specific element becomes visible
         return driver.getWindowHandles().size() > 1; // Example: multiple windows
     }
 
-    public static void uploadingFileUsingRobotInfinite(WebDriver driver,By locator, String path) {
+    public static void uploadingFileUsingRobotInfinite(AppiumDriver driver,By locator, String path) {
 
         try {
             boolean isUploadDialogOpened = false;
@@ -235,7 +234,7 @@ public class Utility {
 
     }
 
-    public static String GetText(WebDriver driver, By locator) {
+    public static String GetText(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -243,25 +242,25 @@ public class Utility {
         return driver.findElement(locator).getText();
     }
 
-    public static WebDriverWait GeneralWait(WebDriver driver) {
+    public static WebDriverWait GeneralWait(AppiumDriver driver) {
 
         return new WebDriverWait(driver, Duration.ofSeconds(10));
 
     }
 
-    public static WebElement ByToWebElement(WebDriver driver, By locator) {
+    public static WebElement ByToWebElement(AppiumDriver driver, By locator) {
 
         return driver.findElement(locator);
     }
 
-    public static ArrayList<WebElement> FindingElementsArrayList(WebDriver driver, By locator) {
+    public static ArrayList<WebElement> FindingElementsArrayList(AppiumDriver driver, By locator) {
 
         return (ArrayList<WebElement>) driver.findElements(locator);
     }
 
 
 
-    public static void ScrollingUsingJS(WebDriver driver, By locator) {
+    public static void ScrollingUsingJS(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver,Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -270,17 +269,17 @@ public class Utility {
     }
 
     /* For Creating Time Stamp for name of screenshots or email vonrability */
-    /* Return the time when the test case run */
+    /* Return the time when the testPages.test case run */
     public static String GetTimeStamp() {
 
         return new SimpleDateFormat("yyyy-MM-dd-hh-mm-ssa").format(new Date());
     }
 
-    public static int numberOfElementsInDom(WebDriver driver, By locator){
+    public static int numberOfElementsInDom(AppiumDriver driver, By locator){
         List<WebElement> elements = driver.findElements(locator);
         return elements.size();
     }
-    public static void TakingScreenShot(WebDriver driver, String ScreenShootName) {
+    public static void TakingScreenShot(AppiumDriver driver, String ScreenShootName) {
 
         try {
             File sourcefile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -297,7 +296,7 @@ public class Utility {
         }
 
     }
-    public static void TakingScreenShotWithURL(WebDriver driver, String ScreenShootName) {
+    public static void TakingScreenShotWithURL(AppiumDriver driver, String ScreenShootName) {
 
         try {
             Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(200))
@@ -329,17 +328,17 @@ public class Utility {
 
     }
 
-    public static void WaitUntilTheElementIsSelected(WebDriver driver, By locator){
+    public static void WaitUntilTheElementIsSelected(AppiumDriver driver, By locator){
 
         new WebDriverWait(driver,Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfAllElements(ByToWebElement(driver,locator)));
     }
-    public static void WaitUntilTheElementIsVisible(WebDriver driver, By locator){
+    public static void WaitUntilTheElementIsVisible(AppiumDriver driver, By locator){
 
         new WebDriverWait(driver,Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
-    public static void TakingScreenShotForSpecificElement(WebDriver driver, By locator, String ScreenShootName) {
+    public static void TakingScreenShotForSpecificElement(AppiumDriver driver, By locator, String ScreenShootName) {
 
         try {
             File sourcefile = (driver.findElement(locator)).getScreenshotAs(OutputType.FILE);
@@ -356,7 +355,7 @@ public class Utility {
         }
     }
 
-    public static void TakingScreenShotForSpecificElementWithYandex(WebDriver driver, By locator, String ScreenShootName) {
+    public static void TakingScreenShotForSpecificElementWithYandex(AppiumDriver driver, By locator, String ScreenShootName) {
         try {
             Screenshot screenshot = new AShot().coordsProvider(new WebDriverCoordsProvider()).takeScreenshot(driver,ByToWebElement(driver,locator));
 
@@ -369,7 +368,7 @@ public class Utility {
         }
     }
 
-    public static void takeScreenshotWithHighlight(WebDriver driver, WebElement element, String ScreenShootName) {
+    public static void takeScreenshotWithHighlight(AppiumDriver driver, WebElement element, String ScreenShootName) {
         try {
             // Step 1: Take a screenshot
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -400,7 +399,7 @@ public class Utility {
     }
 
         // take locator for highlighting specific element
-    public static void TakingFullScreenShot(WebDriver driver, By locator) {
+    public static void TakingFullScreenShot(AppiumDriver driver, By locator) {
         try {
             Shutterbug.shootPage(driver, Capture.FULL_SCROLL)
                     .highlight(ByToWebElement(driver, locator))
@@ -411,7 +410,7 @@ public class Utility {
         }
     }
 
-    public static void TakingFullScreenShot(WebDriver driver, String screenshotName) {
+    public static void TakingFullScreenShot(AppiumDriver driver, String screenshotName) {
         try {
             BufferedImage screenshot = Shutterbug.shootPage(driver, Capture.FULL_SCROLL).getImage();
 
@@ -424,99 +423,34 @@ public class Utility {
         }
     }
 
-    public static void SelectingFromDropDownByText(WebDriver driver, By locator, String option) {
+    public static void SelectingFromDropDownByText(AppiumDriver driver, By locator, String option) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
 
         new Select(ByToWebElement(driver, locator)).selectByVisibleText(option);
     }
-    public static void SelectingFromDropDownByTextWWait(WebDriver driver, By locator, String option) {
+    public static void SelectingFromDropDownByTextWWait(AppiumDriver driver, By locator, String option) {
 
         new Select(ByToWebElement(driver, locator)).selectByVisibleText(option);
     }
 
-    public static void SelectingFromDropDownByIndex(WebDriver driver, By locator, int Index) {
+    public static void SelectingFromDropDownByIndex(AppiumDriver driver, By locator, int Index) {
 
         new WebDriverWait(driver,Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfAllElements(ByToWebElement(driver,locator)));
 
         new Select(ByToWebElement(driver, locator)).selectByIndex(Index);
     }
-    public static boolean isElementPresent(WebDriver driver, By locator) {
+    public static boolean isElementPresent(AppiumDriver driver, By locator) {
         return !driver.findElements(locator).isEmpty();
     }
 
-    public static void clearField(WebDriver driver, By locator){
+    public static void clearField(AppiumDriver driver, By locator){
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
 
         driver.findElement(locator).clear();
-    }
-    //TODO: Checking Broken Link and Broken Image Using HTTP Connection
-    /*
-     * @elements -> the elements that have link or image
-     * @Image or Link -> choose the type of checking
-     * This Function Throws 2 Exceptions MalformedURLException and URISyntaxException
-     * This Function Using HTTP Connection
-     * */
-    public static void CheckBrokenLinkAndImageUsingHTTPConnection(List<WebElement> elements, String typeofcheck) {
-        URL url = null;
-        String type = typeofcheck.toLowerCase();
-        String attribute = null;
-        HttpURLConnection httpURLConnection = null;
-        if (type.equals("image")) {
-            attribute = "src";
-        } else if (type.equals("link")) {
-            attribute = "href";
-        } else {
-            LogsUtility.LoggerError("Error Type.\n" +
-                    "The Types Image or Link");
-        }
-        for (WebElement element : elements) {
-            try {
-                url = new URI(element.getAttribute(attribute)).toURL();
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                LogsUtility.LoggerInfo(httpURLConnection.getResponseMessage() + " " + httpURLConnection.getResponseCode());
-            } catch (URISyntaxException | IOException e) {
-                LogsUtility.LoggerError("Exception");
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    //TODO: Checking Broken Link and Broken Image Using RestAssured
-    /*
-     * @elements -> the elements that have link or image
-     * @Image or Link -> choose the type of checking
-     * This Function Throws 2 Exceptions MalformedURLException and URISyntaxException
-     * This Function Using RestAssured
-     * */
-    public static void CheckBrokenLinkAndImageUsingRestAssured(List<WebElement> elements, String typeofcheck) {
-        List<URL> url = new ArrayList<>();
-        String type = typeofcheck.toLowerCase();
-        String attribute = null;
-        if (type.equals("image")) {
-            attribute = "src";
-        } else if (type.equals("link")) {
-            attribute = "href";
-        } else {
-            LogsUtility.LoggerError("Error Type.\n" +
-                    "The Types Image or Link");
-        }
-        for (WebElement element : elements) {
-            try {
-                url.add(new URI(element.getAttribute(attribute)).toURL());
-            } catch (MalformedURLException | URISyntaxException e) {
-                LogsUtility.LoggerError("Exception");
-                e.printStackTrace();
-            }
-        }
-        for (URL elementurl : url) {
-            Response response = RestAssured.given().get(elementurl);
-            LogsUtility.LoggerInfo(response.getStatusLine());
-        }
     }
 
     // why +1 because the locator start with 1 not like the arrays
@@ -545,7 +479,7 @@ public class Utility {
         }
     }
 
-    public static boolean VerifyCurrentURLToExpected(WebDriver driver, String expectedURL) {
+    public static boolean VerifyCurrentURLToExpected(AppiumDriver driver, String expectedURL) {
 
         try {
             GeneralWait(driver).until(ExpectedConditions.urlToBe(expectedURL));
@@ -557,15 +491,15 @@ public class Utility {
         return true;
     }
 
-    public static boolean ComparingTheCurrentURLToExpected(WebDriver driver, String expectedURL) {
+    public static boolean ComparingTheCurrentURLToExpected(AppiumDriver driver, String expectedURL) {
 
         return driver.getCurrentUrl().equals(expectedURL);
     }
 
-    public static String getCurrentURL (WebDriver driver){
+    public static String getCurrentURL (AppiumDriver driver){
         return driver.getCurrentUrl();
     }
-    // for regression test for storing only one latest file from logs
+    // for regression testPages.test for storing only one latest file from logs
     public static File GetLatestFile(String folderpath) {
         File folder = new File(folderpath);
         File[] files = folder.listFiles();
@@ -578,28 +512,28 @@ public class Utility {
         return files[0];
     }
 
-    // we want to make a session for login instead of every time I have to log in I will log in inside before test
+    // we want to make a session for login instead of every time I have to log in I will log in inside before testPages.test
     // So I don't need to log in every time using cookies
 
     /* Take all Cookies from The Website */
-    public static Set<Cookie> GetAllCookies(WebDriver driver) {
+    public static Set<Cookie> GetAllCookies(AppiumDriver driver) {
 
         return driver.manage().getCookies();
     }
 
     /* Injecting all the cookies to the driver */
-    public static void InjectCookies(WebDriver driver, Set<Cookie> cookies) {
+    public static void InjectCookies(AppiumDriver driver, Set<Cookie> cookies) {
         for (Cookie cookie : cookies) {
             driver.manage().addCookie(cookie);
         }
     }
-    public static void DeleteCookies(WebDriver driver, Set<Cookie> cookies) {
+    public static void DeleteCookies(AppiumDriver driver, Set<Cookie> cookies) {
         for (Cookie cookie : cookies) {
             driver.manage().deleteCookie(cookie);
         }
     }
 
-    public static void DeleteAllCookies(WebDriver driver, Set<Cookie> cookies) {
+    public static void DeleteAllCookies(AppiumDriver driver, Set<Cookie> cookies) {
             driver.manage().deleteAllCookies();
     }
     /**
@@ -684,60 +618,6 @@ public class Utility {
                 .body()
                 .asString();
     }
-
-
-//    public static void takeFullPageScreenshot(WebDriver driver, String ScreenShootName) {
-//        try {
-//            // Cast WebDriver to JavaScriptExecutor
-//            JavascriptExecutor js = (JavascriptExecutor) driver;
-//
-//            // Get total page height and viewport height
-//            int pageHeight = ((Long) js.executeScript("return document.body.scrollHeight")).intValue();
-//            int viewportHeight = ((Long) js.executeScript("return window.innerHeight")).intValue();
-//
-//            // List to store each viewport screenshot
-//            List<BufferedImage> screenshots = new ArrayList<>();
-//
-//            // Scroll and capture screenshots for each viewport
-//            int scrollPosition = 0;
-//            while (scrollPosition < pageHeight) {
-//                // Scroll to the current position
-//                js.executeScript("window.scrollTo(0, " + scrollPosition + ");");
-//                Thread.sleep(500); // Allow time for the scroll to complete
-//
-//                // Capture the current viewport screenshot
-//                File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-//                BufferedImage image = ImageIO.read(screenshotFile);
-//                screenshots.add(image);
-//
-//                // Move to the next scroll position
-//                scrollPosition += viewportHeight;
-//            }
-//
-//            // Combine all screenshots into one
-//            int totalWidth = screenshots.get(0).getWidth();
-//            int totalHeight = pageHeight;
-//            BufferedImage fullImage = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_RGB);
-//
-//            Graphics g = fullImage.getGraphics();
-//            int currentHeight = 0;
-//            for (BufferedImage image : screenshots) {
-//                g.drawImage(image, 0, currentHeight, null);
-//                currentHeight += image.getHeight();
-//            }
-//            g.dispose();
-//
-//            // Save the combined image
-//            File output = new File(baseLineScreenshot + ScreenShootName+ ".png");
-//            ImageIO.write(fullImage, "PNG", output);
-//
-//            System.out.println("Full-page screenshot saved at: " + output.getAbsolutePath());
-//
-//        } catch (Exception e) {
-//            System.err.println("Failed to take full-page screenshot: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
 
     public static void typeString(Robot robot, String text) {
         for (char c : text.toCharArray()) {

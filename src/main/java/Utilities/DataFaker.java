@@ -2,7 +2,8 @@ package Utilities;
 
 import com.github.javafaker.Faker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class DataFaker {
 

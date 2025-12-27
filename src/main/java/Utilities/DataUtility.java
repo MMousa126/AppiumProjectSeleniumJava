@@ -15,13 +15,82 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Properties;
+import java.sql.*;
+import java.util.*;
 
 // this class concerns with the Data like handling data from external files
 public class DataUtility {
 
-    public static final String TestData_Path = "src/test/resources/TestData/";
+    public static final String TestData_Path = "src/testPages.test/resources/TestData/";
+
+
+    // TODO: jdbc -> means Java Database Connactivity
+    // TODO: URL should be (jdbc:the database type://the IP address of the Database:the port number/database name)
+    // TODO: UserName
+    // TODO: Password
+
+    // TODO: UPDATE/INSERT/DELETE into the Database
+    public static int updateQueryToDB(String DBURL,String DBUsername,String DBPassword,String DBQuery){
+        int rowsAffected = 0;
+        Connection conn = null;
+        Statement stmt = null;
+
+        try {
+            conn = DriverManager.getConnection(DBURL, DBUsername, DBPassword);
+            stmt = conn.createStatement();
+            rowsAffected = stmt.executeUpdate(DBQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return rowsAffected;
+    }
+
+
+    // TODO: Read Data from the Data base
+    public static List<Map<String, Object>> readDataFromDB(String DBURL, String DBUsername, String DBPassword, String DBQuery) {
+        List<Map<String, Object>> dataList = new ArrayList<>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DriverManager.getConnection(DBURL, DBUsername, DBPassword);
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(DBQuery);
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+                dataList.add(row);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return dataList;
+    }
 
 
     /* Reading From Json File */
@@ -83,7 +152,7 @@ public class DataUtility {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    
+
         try (FileOutputStream outputStream = new FileOutputStream(TestData_Path + propertiesFilename + ".properties")) {
             properties.setProperty(key, value);
             properties.store(outputStream, null);
