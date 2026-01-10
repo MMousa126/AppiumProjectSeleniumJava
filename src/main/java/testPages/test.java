@@ -8,6 +8,7 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -44,12 +45,25 @@ public class test {
 //        );
 
         MobileDriverFactory.setUpThreadDriverMob("android","http://127.0.0.1:4723",options);
-        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.accessibilityId("Preference"));
-//        androidDriver.quit();
+
+
+//        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.accessibilityId("Preference"));
+        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.accessibilityId("Views"));
+//        Utility.scrollToElementUIAutomator(MobileDriverFactory.getThreadDriverMob("Android"),"Webview3");
+
+        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.accessibilityId("Gallery"));
+        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.accessibilityId("1. Photos"));
+        Utility.Clicking_OnElement(MobileDriverFactory.getThreadDriverMob("Android"), AppiumBy.xpath("(//android.widget.ImageView)[1]"));
+//        Utility.swipeDirections(MobileDriverFactory.getThreadDriverMob("Android"),By.xpath("(//android.widget.ImageView)[1]"),"left");
+//        System.out.println("|||||||||||||||||||||||||" + Utility.getAttribute(MobileDriverFactory.getThreadDriverMob("Android"),
+//                By.xpath("(//android.widget.ImageView)[3]"),"focusable")+"||||||||||||||||||||||||||||");
+//        //        androidDriver.quit();
 
 //        appiumServiceBuilder.close();
-        MobileDriverFactory.QuitThreadDriver();
-        MobileDriverFactory.closeAppiumServer();
+
+
+//        MobileDriverFactory.QuitThreadDriver();
+//        MobileDriverFactory.closeAppiumServer();
 
 
 
