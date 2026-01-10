@@ -2,13 +2,21 @@ package Utilities;
 
 import com.assertthat.selenium_shutterbug.core.Capture;
 import com.assertthat.selenium_shutterbug.core.Shutterbug;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.Location;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.nativekey.AndroidKey;
+import io.appium.java_client.ios.IOSDriver;
 import io.qameta.allure.Allure;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.*;
 import org.openqa.selenium.io.FileHandler;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,7 +24,7 @@ import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.WebDriverCoordsProvider;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
-
+import io.appium.java_client.android.nativekey.AndroidKey;
 import javax.imageio.ImageIO;
 import java.awt.Rectangle;
 import java.awt.*;
@@ -41,7 +49,157 @@ public class Utility {
 
 
 
+    public static void toggleWifi(AppiumDriver driver){
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).toggleWifi();
+        }else {
+            throw new UnsupportedOperationException("Wi-Fi toggle not supported on iOS");
+        }
+    }
+    public static void toggleMobileData(AppiumDriver driver){
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).toggleData();
+        }else {
+            throw new UnsupportedOperationException("Mobile data toggle not supported on iOS");
+        }
+    }
+    public static void toggleAirplaneMode(AppiumDriver driver){
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).toggleAirplaneMode();
+        }else {
+            throw new UnsupportedOperationException("Airplane Mode toggle not supported on iOS");
+        }
+    }
+    public static void setLocation(AppiumDriver driver, int latitude, int longitude, double altitude){
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).setLocation(new Location(latitude, longitude, altitude));
+        } else if (driver instanceof IOSDriver) {
+            ((IOSDriver)driver).setLocation(new Location(latitude, longitude, altitude));
+        } else {
+            throw new UnsupportedOperationException("Location mocking not supported");
+        }
+    }
+    public static void allowLocation(AppiumDriver driver, String appPackage) {
 
+        if (driver instanceof AndroidDriver) {
+
+            driver.executeScript("mobile: shell", Map.of(
+                    "command", "pm",
+                    "args", List.of(
+                            "grant",
+                            appPackage,
+                            "android.permission.ACCESS_FINE_LOCATION"
+                    )
+            ));
+
+        } else if (driver instanceof IOSDriver) {
+            // iOS: handled via capabilities or auto-alert handling
+            System.out.println("iOS location permission handled via autoAcceptAlerts");
+        }
+    }
+    public static void allowCamera(AppiumDriver driver, String appPackage) {
+
+        if (driver instanceof AndroidDriver) {
+
+            driver.executeScript("mobile: shell", Map.of(
+                    "command", "pm",
+                    "args", List.of(
+                            "grant",
+                            appPackage,
+                            "android.permission.CAMERA"
+                    )
+            ));
+
+        } else if (driver instanceof IOSDriver) {
+            System.out.println("iOS camera permission handled via autoAcceptAlerts");
+        }
+    }
+    public static void allowNotifications(AppiumDriver driver, String appPackage) {
+
+        if (driver instanceof AndroidDriver) {
+
+            driver.executeScript("mobile: shell", Map.of(
+                    "command", "cmd",
+                    "args", List.of(
+                            "notification",
+                            "allow",
+                            appPackage
+                    )
+            ));
+
+        } else if (driver instanceof IOSDriver) {
+            System.out.println("iOS notifications permission handled via autoAcceptAlerts");
+        }
+    }
+    // TODO: Drag and Drop from web element to another
+    public static void dragDropSourceDis(AppiumDriver driver, By sourceLocator, By targetLocator, int durationMs) {
+
+        // Wait for source and target elements
+        WebElement source = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(sourceLocator));
+
+        WebElement target = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(targetLocator));
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        if (driver instanceof AndroidDriver) {
+            // Android drag and drop using scrollGesture
+            js.executeScript("mobile: dragGesture", Map.of(
+                    "elementId", ((RemoteWebElement) source).getId(),
+                    "endElementId", ((RemoteWebElement) target).getId(),
+                    "duration", durationMs
+            ));
+        } else if (driver instanceof IOSDriver) {
+            // iOS drag and drop using dragFromToForDuration
+            js.executeScript("mobile: dragFromToForDuration", Map.of(
+                    "element", ((RemoteWebElement) source).getId(),
+                    "toElement", ((RemoteWebElement) target).getId(),
+                    "duration", durationMs / 1000.0  // iOS duration is in seconds
+            ));
+        } else {
+            throw new IllegalStateException("Unsupported driver type: " + driver.getClass().getSimpleName());
+        }
+    }
+
+    // TODO: Method for LandScape and Portrait (direction either Landscape or Portrait)
+    public static void landScapePortrait(AppiumDriver driver, String direction) {
+        if (driver == null) throw new IllegalArgumentException("Driver cannot be null");
+        if (direction == null) throw new IllegalArgumentException("Direction cannot be null");
+
+        direction = direction.trim().toLowerCase();
+
+        ScreenOrientation orientation;
+        switch (direction) {
+            case "portrait":
+                orientation = ScreenOrientation.PORTRAIT;
+                break;
+            case "landscape":
+                orientation = ScreenOrientation.LANDSCAPE;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid direction. Use 'portrait' or 'landscape'.");
+        }
+
+        // Cast to platform-specific driver
+        if (driver instanceof AndroidDriver) {
+            ((AndroidDriver) driver).rotate(orientation);
+        } else if (driver instanceof IOSDriver) {
+            ((IOSDriver) driver).rotate(orientation);
+        } else {
+            throw new UnsupportedOperationException("Driver does not support orientation change");
+        }
+
+        LogsUtility.LoggerInfo("Device set to " + orientation);
+    }
+
+    public static void hideKeyboard(AppiumDriver driver) {
+        try {
+            ((AndroidDriver)driver).hideKeyboard();
+        } catch (Exception e) {
+            LogsUtility.LoggerInfo("Keyboard not visible");
+        }
+    }
     public static void Clicking_OnElement(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(15))
@@ -50,6 +208,47 @@ public class Utility {
         driver.findElement(locator).click();
     }
 
+
+    public static Set<String> getContext(AppiumDriver driver) {
+        if (driver == null) {
+            throw new IllegalArgumentException("Driver cannot be null");
+        }
+        if (driver instanceof AndroidDriver) {
+            return ((AndroidDriver)driver).getContextHandles();
+        } else if (driver instanceof IOSDriver) {
+            return ((IOSDriver)driver).getContextHandles();
+        } else {
+            throw new UnsupportedOperationException("Driver does not support contexts");
+        }
+    }
+
+    public static void pressBack(AppiumDriver driver) {
+
+        if (driver instanceof AndroidDriver) {
+            driver.executeScript("mobile: pressKey", Map.of(
+                    "keycode", 4
+            ));
+        } else {
+            LogsUtility.LoggerInfo("Back key not supported on iOS");
+        }
+    }
+    public static void pressHome(AppiumDriver driver) {
+        if (driver instanceof AndroidDriver) {
+            driver.executeScript("mobile: pressKey", Map.of("keycode", 3)); // HOME
+        } else if (driver instanceof IOSDriver) {
+            driver.executeScript("mobile: pressButton", Map.of("name", "home"));
+        }
+    }
+    public static void openRecents(AppiumDriver driver) {
+        if (driver instanceof AndroidDriver) {
+            driver.executeScript("mobile: pressKey", Map.of("keycode", 187)); // RECENTS
+        } else {
+            LogsUtility.LoggerInfo("Recents not supported on iOS");
+        }
+    }
+    public static void backgroundApp(AppiumDriver driver, int seconds) {
+        ((AndroidDriver)driver).runAppInBackground(Duration.ofSeconds(seconds));
+    }
     public static void Clicking_OnElementVisibility(AppiumDriver driver, By locator) {
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
@@ -110,13 +309,35 @@ public class Utility {
 
         return driver.findElement(locator).getAttribute(attribute);
     }
-    public static String getAttributeBoolean(AppiumDriver driver,By locator, String attribute,Boolean exp){
+    public static String getAttributeBoolean(AppiumDriver driver, AppiumBy locator, String attribute, Boolean exp){
 
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementSelectionStateToBe(locator,exp));
 
         return driver.findElement(locator).getAttribute(attribute);
     }
+
+    // TODO: By using google engine to find the element
+
+    public static void scrollToElementUIAutomator(AppiumDriver driver, String visibleText) {
+
+        driver.findElement(AppiumBy.androidUIAutomator(
+                "new UiScrollable(new UiSelector().scrollable(true))" +
+                        ".scrollIntoView(new UiSelector().textContains(\"" + visibleText + "\"))"
+        ));
+    }
+
+    public static void longPressAction(AppiumDriver driver, By locator, int durationMs) {
+
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+        ((JavascriptExecutor) driver).executeScript("mobile: longClickGesture", Map.of(
+                "elementId", ((RemoteWebElement) element).getId(),
+                "duration", durationMs
+        ));
+    }
+
 
     public static void SendData(AppiumDriver driver, By locator, String DataToBeSend) {
 
@@ -258,7 +479,59 @@ public class Utility {
         return (ArrayList<WebElement>) driver.findElements(locator);
     }
 
+    public static void scrollToElement(AppiumDriver driver, String scrollToText){
 
+        driver.findElement(AppiumBy.androidUIAutomator
+                ("new UiScrollable(new UiSelector()).scrollIntoView(text("+scrollToText+"))"));
+
+    }
+
+    public static void swipeDirections(AppiumDriver driver, By locator, String direction) {
+
+        if (driver == null) throw new IllegalArgumentException("Driver cannot be null");
+        if (locator == null) throw new IllegalArgumentException("Locator cannot be null");
+
+        direction = direction.toLowerCase();
+        if (!List.of("up", "down", "left", "right").contains(direction)) {
+            throw new IllegalArgumentException("Direction must be up, down, left, or right");
+        }
+
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfElementLocated(locator));
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        if (driver instanceof AndroidDriver) {
+            js.executeScript("mobile: scrollGesture", Map.of(
+                    "elementId", ((RemoteWebElement) element).getId(),
+                    "direction", direction,
+                    "percent", 0.75
+            ));
+        } else if (driver instanceof IOSDriver) {
+            js.executeScript("mobile: scroll", Map.of(
+                    "elementId", ((RemoteWebElement) element).getId(),
+                    "direction", direction
+            ));
+        } else {
+            throw new IllegalStateException("Unsupported driver type: " + driver.getClass().getSimpleName());
+        }
+    }
+
+
+    public static void scrollToEnd(AppiumDriver driver){
+
+        boolean scrollEnd;
+        do{
+            scrollEnd = (Boolean)  ((JavascriptExecutor) driver).executeScript("mobile: scrollGesture", ImmutableBiMap.of(
+                    "left", 100,
+                    "top", 100,
+                    "width", 800,
+                    "height", 1600,
+                    "direction", "down",
+                    "percent", 0.75
+            ));
+        }while (scrollEnd);
+    }
 
     public static void ScrollingUsingJS(AppiumDriver driver, By locator) {
 

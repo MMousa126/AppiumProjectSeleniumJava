@@ -3,6 +3,7 @@ package Factory;
 import Utilities.LogsUtility;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.options.BaseOptions;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
@@ -152,6 +153,10 @@ public class MobileDriverFactory {
             e.printStackTrace();
             throw new RuntimeException("Failed to initialize driver", e);
         }
+    }
+
+    public static void setCromeDriver(UiAutomator2Options appiumOptions, String chromeDriverPath){
+        appiumOptions.setChromedriverExecutable(chromeDriverPath);
     }
 
     /*
